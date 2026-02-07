@@ -1,0 +1,50 @@
+stargate_version: 1.10.2
+stargate_network_name: "Default"
+stargate_network_cidr: 24
+stargate_ca_cert_duration: "87600h0m0s" #10 years
+stargate_client_cert_duration: "43800h0m0s" #5 years
+stargate_clean_install: false
+stargate_dhd_build_hosts_file: true
+stargate_node_dhd_in_hosts_file: true
+stargate_node_use_dhd_as_relay: false
+stargate_install_check_cron: false
+
+
+stargate_dhd_hostname: dhd
+stargate_dhd_internal_ip_addr: 169.254.1.1
+stargate_dhd_public_hostname: dhd.sgc.ai
+stargate_dhd_public_port: 4242
+stargate_dhd_is_relay: false
+stargate_dhd_extra_config: {}
+
+# Lighthouse remote_allow_list configuration
+# Controls IP ranges that this node will consider when handshaking to another node
+# Format: CIDR: boolean (true to allow, false to deny)
+# If all rules are "allow", default will be "deny", and vice-versa
+# If both "allow" and "deny" rules are present, you MUST set a rule for "0.0.0.0/0" as default
+stargate_dhd_remote_allow_list: {}
+
+# Lighthouse local_allow_list configuration
+# Filters which local IP addresses are advertised to the dhds
+# Can specify interfaces map of regular expressions to match against interface names
+# Format: CIDR: boolean or interfaces: { interface_regex: boolean }
+stargate_dhd_local_allow_list: {}
+
+stargate_metrics_prometheus_enabled: false
+stargate_metrics_prometheus_listen: "127.0.0.1:4244"
+stargate_metrics_prometheus_path: "/metrics"
+stargate_metrics_prometheus_namespace: stargate
+stargate_metrics_prometheus_interval: 10s
+
+stargate_iris_block_action: drop
+
+stargate_inbound_rules:
+  - { port: "any", proto: "any", host: "any" }
+stargate_outbound_rules:
+  - { port: "any", proto: "any", host: "any" }
+
+dhd_sshd_enabled: false
+dhd_sshd_listen: "127.0.0.1:80942"
+dhd_sshd_authorized_users: []
+dhd_sshd_trusted_cas: []
+

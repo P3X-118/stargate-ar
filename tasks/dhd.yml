@@ -1,0 +1,37 @@
+---
+- name: Ensure CA cert/key exists
+  ansible.builtin.command:
+    chdir: /etc/stargate
+    cmd: ./nebula-cert ca -name "{{ nebula_network_name }}" -duration "{{ nebula_ca_cert_duration }}"
+    creates: /etc/stargate/ca.crt
+
+- name: Ensure stargate cert/key exists
+  ansible.builtin.command:
+    chdir: /etc/stargate
+    cmd: ./nebula-cert sign -name "{{ nebula_lighthouse_hostname }}" -ip "{{ nebula_lighthouse_internal_ip_addr }}/{{ nebula_network_cidr }}" -duration "{{ nebula_client_cert_duration }}"
+    creates: "/etc/stargate/{{ nebula_lighthouse_hostname }}.crt"
+
+- name: Ensure stargate is configured
+  ansible.builtin.template:
+    src: dhd_config.yml.j2 
+    dest: /etc/stargate/config.yml
+    owner: root
+    group: root
+    mode: '0400'
+  notify: restart stargate
+
+- name: Ensure stargate service exists
+  ansible.builtin.template:
+    src: stargate.service.j2
+    dest: /etc/systemd/system/stargate.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Ensure stargate service is enabled and running
+  ansible.builtin.systemd: 
+    name: stargate
+    daemon_reload: yes
+    enabled: yes
+    masked: no
+    state: started

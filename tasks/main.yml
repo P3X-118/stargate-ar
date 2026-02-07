@@ -1,0 +1,21 @@
+---
+- name: Stargate Install
+  block:
+    - name: Uninstall Stargate (clean install)
+      include_tasks: uninstall.yml
+      when: stargate_clean_install|bool
+
+    - name: Preflight checks
+      include_tasks: preflight.yml
+
+    - name: Install Stargate on all hosts 
+      include_tasks: stargate.yml
+    
+    - name: Deploy DHD
+      include_tasks: dhd.yml
+      when: inventory_hostname in groups['stargate_dhd']
+    
+    - name: Deploy Stargate Node
+      include_tasks: node.yml
+      when: inventory_hostname not in groups['stargate_dhd']
+  when: inventory_hostname in groups['stargate_dhd'] or stargate_internal_ip_addr is defined
