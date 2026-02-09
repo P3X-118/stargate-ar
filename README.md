@@ -21,7 +21,7 @@ You can read more about Nebula [on the official repo](https://github.com/slackhq
     stargate_network_name: "Company Nebula Mgmt Net"
     stargate_network_cidr: 16
 
-    stargate_dhd_internal_ip_addr: 10.43.0.1
+    stargate_internal_ip_addr: 10.43.0.1
     stargate_dhd_public_hostname: lighthouse.company.com
     stargate_dhd_public_port: 4242
 

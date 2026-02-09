@@ -12,7 +12,7 @@ static_host_map:
  #
  # format "Nebula IP": ["public IP or hostname:port"]
  #
- "{{ stargate_dhd_internal_ip_addr }}": ["{{ stargate_dhd_public_hostname }}:{{ stargate_dhd_public_port }}"]
+ "{{ stargate_internal_ip_addr }}": ["{{ stargate_dhd_public_hostname }}:{{ stargate_dhd_public_port }}"]
 
 lighthouse:
   interval: 60
@@ -27,7 +27,7 @@ lighthouse:
     # lighthouse nodes here, one per line, in the following
     # format:
     #
-    - "{{ stargate_dhd_internal_ip_addr }}"
+    - "{{ stargate_internal_ip_addr }}"
 
 listen:
   # 0.0.0.0 means "all interfaces," which is probably what you want
@@ -44,7 +44,7 @@ relay:
   am_relay: false
   use_relays: {{ stargate_node_use_dhd_as_relay }}
   relays:
-    - {{ stargate_dhd_internal_ip_addr }}
+    - {{ stargate_internal_ip_addr }}
 
 # "punch_back" allows the other node to try punching out to you,
 # if you're having trouble punching out to it. Useful for stubborn

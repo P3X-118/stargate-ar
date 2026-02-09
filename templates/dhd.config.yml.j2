@@ -12,7 +12,7 @@ static_host_map:
  #
  # format "<internal-nebula-ip-addr>": ["<pub-ip-addr>:[port] or <hostname>:[port]"]
  #
- "{{ stargate_dhd_internal_ip_addr }}": ["{{ stargate_dhd_public_hostname }}:{{ stargate_dhd_public_port }}"]
+ "{{ stargate_internal_ip_addr }}": ["{{ stargate_dhd_public_hostname }}:{{ stargate_dhd_public_port }}"]
 
 lighthouse:
   interval: 60

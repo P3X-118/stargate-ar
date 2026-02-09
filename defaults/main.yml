@@ -11,7 +11,7 @@ stargate_install_check_cron: false
 
 
 stargate_dhd_hostname: dhd
-stargate_dhd_internal_ip_addr: 169.254.1.1
+stargate_internal_ip_addr: 169.254.1.1
 stargate_dhd_public_hostname: dhd.sgc.ai
 stargate_dhd_public_port: 4242
 stargate_dhd_is_relay: false

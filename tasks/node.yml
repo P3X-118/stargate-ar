@@ -53,7 +53,7 @@
 - name: Ensure node has hosts file entry for lighthouse
   ansible.builtin.lineinfile:
     path: /etc/hosts
-    line: "{{ stargate_dhd_internal_ip_addr }} {{ stargate_dhd_hostname }}.dhd"
+    line: "{{ stargate_internal_ip_addr }} {{ stargate_dhd_hostname }}.dhd"
   when: stargate_node_dhd_in_hosts_file
 
 - name: Read cert/key from DHD
