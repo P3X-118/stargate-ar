@@ -9,7 +9,7 @@
       include_tasks: preflight.yml
 
     - name: Install Stargate on all hosts 
-      include_tasks: stargate.yml
+      include_tasks: nebula.yml
     
     - name: Deploy DHD
       include_tasks: dhd.yml
