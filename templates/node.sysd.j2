@@ -9,7 +9,7 @@ Type=notify
 NotifyAccess=main
 SyslogIdentifier=nebula
 ExecReload=/bin/kill -HUP $MAINPID
-ExecStart=/opt/nebula/nebula -config /opt/nebula/config.yml
+ExecStart=/etc/stargate/nebula -config /etc/stargate/config.yml
 Restart=always
 RestartSec=42s
 

@@ -17,20 +17,20 @@ You can read more about Nebula [on the official repo](https://github.com/slackhq
   user: ansible
   become: yes
   vars:
-    nebula_version: 1.8.0
-    nebula_network_name: "Company Nebula Mgmt Net"
-    nebula_network_cidr: 16
+    stargate_version: 1.8.0
+    stargate_network_name: "Company Nebula Mgmt Net"
+    stargate_network_cidr: 16
 
-    nebula_lighthouse_internal_ip_addr: 10.43.0.1
-    nebula_lighthouse_public_hostname: lighthouse.company.com
-    nebula_lighthouse_public_port: 4242
+    stargate_dhd_internal_ip_addr: 10.43.0.1
+    stargate_dhd_public_hostname: lighthouse.company.com
+    stargate_dhd_public_port: 4242
 
     nebula_firewall_drop_action: reject
 
-    nebula_inbound_rules:
+    stargate_inbound_rules:
       - { port: "any", proto: "icmp", host: "any" }
       - { port: 22, proto: "tcp", host: "any" }
-    nebula_outbound_rules:
+    stargate_outbound_rules:
       - { port: "any", proto: "any", host: "any" }
 
   roles:
@@ -57,9 +57,9 @@ pbx01.company.com nebula_internal_ip_addr=10.43.0.6
 This role supports Nebula's built-in SSH debug console feature. To enable it, set:
 
 ```yaml
-nebula_sshd_enabled: true
-nebula_sshd_listen: "127.0.0.1:2222"  # Optional, defaults to 127.0.0.1:2222
-nebula_sshd_authorized_users:
+dhd_sshd_enabled: true
+dhd_sshd_listen: "127.0.0.1:2222"  # Optional, defaults to 127.0.0.1:2222
+dhd_sshd_authorized_users:
   - user: admin
     keys:
       - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... admin@host"

@@ -13,22 +13,22 @@
 
 - name: Get Nebula version (if installed)
   ansible.builtin.command: "/etc/stargate/nebula -version"
-  register: installed_nebula_version_out
+  register: installed_stargate_version_out
   changed_when: False
   failed_when: False
   when: installed_nebula_stats.stat.exists
 
 - name: Extract Nebula version from command output
   ansible.builtin.set_fact:
-    installed_nebula_version: "{{ installed_nebula_version_out.stdout.split(' ')[1] }}"
+    installed_stargate_version: "{{ installed_stargate_version_out.stdout.split(' ')[1] }}"
   when: installed_nebula_stats.stat.exists
 
 - name: Download & Extract Nebula
   ansible.builtin.unarchive:
-    src: "https://github.com/slackhq/nebula/releases/download/v{{ nebula_version }}/nebula-linux-{{ nebula_architectures[ansible_facts.architecture] }}.tar.gz"
+    src: "https://github.com/slackhq/nebula/releases/download/v{{ stargate_version }}/nebula-linux-{{ nebula_architectures[ansible_facts.architecture] }}.tar.gz"
     dest: "/etc/stargate"
     remote_src: yes
-  when: (installed_nebula_version|default(nebula_version) != nebula_version) or (not installed_nebula_stats.stat.exists)
+  when: (installed_stargate_version|default(stargate_version) != stargate_version) or (not installed_nebula_stats.stat.exists)
   notify: restart stargate
 
 - name: Ensure Nebula binaries permissions are correct
@@ -65,7 +65,7 @@
         src: "{{ item.1 }}"
       register: ssh_key_files
       failed_when: false
-      loop: "{{ nebula_sshd_authorized_users | subelements('key_files', skip_missing=True) }}"
+      loop: "{{ dhd_sshd_authorized_users | subelements('key_files', skip_missing=True) }}"
 
     - name: Build SSH key registry by username
       ansible.builtin.set_fact:

@@ -2,8 +2,8 @@ pki:
   # every node needs a copy of ca.crt, <client-name>.key,
   # and <client-name>.crt
   ca: /opt/nebula/ca.crt
-  cert: /opt/nebula/{{ nebula_lighthouse_hostname }}.crt
-  key: /opt/nebula/{{ nebula_lighthouse_hostname }}.key
+  cert: /opt/nebula/{{ stargate_dhd_hostname }}.crt
+  key: /opt/nebula/{{ stargate_dhd_hostname }}.key
 
 static_host_map:
  # how to find one or more lighthouse nodes
@@ -12,7 +12,7 @@ static_host_map:
  #
  # format "<internal-nebula-ip-addr>": ["<pub-ip-addr>:[port] or <hostname>:[port]"]
  #
- "{{ nebula_lighthouse_internal_ip_addr }}": ["{{ nebula_lighthouse_public_hostname }}:{{ nebula_lighthouse_public_port }}"]
+ "{{ stargate_dhd_internal_ip_addr }}": ["{{ stargate_dhd_public_hostname }}:{{ stargate_dhd_public_port }}"]
 
 lighthouse:
   interval: 60
@@ -29,39 +29,39 @@ lighthouse:
     #
     # - "192.168.77.1"
 
-{% if nebula_lighthouse_remote_allow_list|length > 0 %}
+{% if stargate_dhd_remote_allow_list|length > 0 %}
   # remote_allow_list controls IP ranges that this node will consider when handshaking
   remote_allow_list:
-  {% for cidr, allow in nebula_lighthouse_remote_allow_list.items() %}
+  {% for cidr, allow in stargate_dhd_remote_allow_list.items() %}
     '{{ cidr }}': {{ allow | lower }}
   {% endfor %}
 {% endif %}
 
-{% if nebula_lighthouse_local_allow_list|length > 0 %}
+{% if stargate_dhd_local_allow_list|length > 0 %}
   # local_allow_list filters which local IP addresses we advertise to the lighthouses
   local_allow_list:
-  {% if nebula_lighthouse_local_allow_list.interfaces is defined %}
+  {% if stargate_dhd_local_allow_list.interfaces is defined %}
     interfaces:
-    {% for interface, allow in nebula_lighthouse_local_allow_list.interfaces.items() %}
+    {% for interface, allow in stargate_dhd_local_allow_list.interfaces.items() %}
       '{{ interface }}': {{ allow | lower }}
     {% endfor %}
   {% endif %}
-  {% for key, value in nebula_lighthouse_local_allow_list.items() %}
+  {% for key, value in stargate_dhd_local_allow_list.items() %}
   {% if key != 'interfaces' %}
     '{{ key }}': {{ value | lower }}
   {% endif %}
   {% endfor %}
 {% endif %}
 
-  {% if nebula_lighthouse_extra_config|length > 0 %}
-    {{- nebula_lighthouse_extra_config | to_nice_yaml | indent(2) }}
+  {% if stargate_dhd_extra_config|length > 0 %}
+    {{- stargate_dhd_extra_config | to_nice_yaml | indent(2) }}
   {% endif %}
 
 listen:
   # 0.0.0.0 means "all interfaces," which is probably what you want
   #
   host: 0.0.0.0
-  port: {{ nebula_lighthouse_public_port }}
+  port: {{ stargate_dhd_public_port }}
 
 # "punchy" basically means "send frequent keepalive packets"
 # so that your router won't expire and close your NAT tunnels.
@@ -75,7 +75,7 @@ punchy: true
 punch_back: true
 
 relay:
-  am_relay: {{ nebula_lighthouse_is_relay }}
+  am_relay: {{ stargate_dhd_is_relay }}
   use_relays: false
 
 tun:
@@ -93,13 +93,13 @@ logging:
   level: info
   format: text
 
-{% if nebula_metrics_prometheus_enabled %}
+{% if stargate_metrics_prometheus_enabled %}
 stats:
   type: prometheus
-  listen: {{ nebula_metrics_prometheus_listen }}
-  path: {{ nebula_metrics_prometheus_path }}
-  namespace: {{ nebula_metrics_prometheus_namespace }}
-  interval: {{ nebula_metrics_prometheus_interval }}
+  listen: {{ stargate_metrics_prometheus_listen }}
+  path: {{ stargate_metrics_prometheus_path }}
+  namespace: {{ stargate_metrics_prometheus_namespace }}
+  interval: {{ stargate_metrics_prometheus_interval }}
 {% endif %}
 
 # you NEED this firewall section.
@@ -112,8 +112,8 @@ stats:
 # one node from another.
 #
 firewall:
-  outbound_action: {{ nebula_firewall_block_action }}
-  inbound_action: {{ nebula_firewall_block_action }}
+  outbound_action: {{ stargate_iris_block_action }}
+  inbound_action: {{ stargate_iris_block_action }}
   conntrack:
     tcp_timeout: 120h
     udp_timeout: 3m
@@ -125,14 +125,14 @@ firewall:
 #
 
   outbound:
-{% for rule in nebula_outbound_rules %}
+{% for rule in stargate_outbound_rules %}
     - port: {{ rule.port }}
       proto: {{ rule.proto }}
       host: {{ rule.host }}
 {% endfor %}
 
   inbound:
-{% for rule in nebula_inbound_rules %}
+{% for rule in stargate_inbound_rules %}
     - port: {{ rule.port }}
       proto: {{ rule.proto }}
       host: {{ rule.host }}

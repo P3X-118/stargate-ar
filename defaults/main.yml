@@ -32,7 +32,7 @@ stargate_dhd_local_allow_list: {}
 
 stargate_metrics_prometheus_enabled: false
 stargate_metrics_prometheus_listen: "127.0.0.1:4244"
-stargate_metrics_prometheus_path: "/metrics"
+stargate_metrics_prometheus_path: "/slag"
 stargate_metrics_prometheus_namespace: stargate
 stargate_metrics_prometheus_interval: 10s
 

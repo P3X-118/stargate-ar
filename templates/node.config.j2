@@ -2,9 +2,9 @@ pki:
   # every node needs a copy of the CA certificate,
   # and its own certificate and key, ONLY.
   #
-  ca: /opt/nebula/ca.crt
-  cert: /opt/nebula/{{ inventory_hostname }}.crt
-  key: /opt/nebula/{{ inventory_hostname }}.key
+  ca: /etc/stargate/ca.crt
+  cert: /etc/stargate/{{ inventory_hostname }}.crt
+  key: /etc/stargate/{{ inventory_hostname }}.key
 
 static_host_map:
  # how to find one or more lighthouse nodes
@@ -12,7 +12,7 @@ static_host_map:
  #
  # format "Nebula IP": ["public IP or hostname:port"]
  #
- "{{ nebula_lighthouse_internal_ip_addr }}": ["{{ nebula_lighthouse_public_hostname }}:{{ nebula_lighthouse_public_port }}"]
+ "{{ stargate_dhd_internal_ip_addr }}": ["{{ stargate_dhd_public_hostname }}:{{ stargate_dhd_public_port }}"]
 
 lighthouse:
   interval: 60
@@ -27,7 +27,7 @@ lighthouse:
     # lighthouse nodes here, one per line, in the following
     # format:
     #
-    - "{{ nebula_lighthouse_internal_ip_addr }}"
+    - "{{ stargate_dhd_internal_ip_addr }}"
 
 listen:
   # 0.0.0.0 means "all interfaces," which is probably what you want
@@ -42,9 +42,9 @@ punchy: true
 
 relay:
   am_relay: false
-  use_relays: {{ nebula_node_use_lighthouse_as_relay }}
+  use_relays: {{ stargate_node_use_dhd_as_relay }}
   relays:
-    - {{ nebula_lighthouse_internal_ip_addr }}
+    - {{ stargate_dhd_internal_ip_addr }}
 
 # "punch_back" allows the other node to try punching out to you,
 # if you're having trouble punching out to it. Useful for stubborn
@@ -67,23 +67,23 @@ logging:
   level: info
   format: text
 
-{% if nebula_metrics_prometheus_enabled %}
+{% if stargate_metrics_prometheus_enabled %}
 stats:
   type: prometheus
-  listen: {{ nebula_metrics_prometheus_listen }}
-  path: {{ nebula_metrics_prometheus_path }}
-  namespace: {{ nebula_metrics_prometheus_namespace }}
-  interval: {{ nebula_metrics_prometheus_interval }}
+  listen: {{ stargate_metrics_prometheus_listen }}
+  path: {{ stargate_metrics_prometheus_path }}
+  namespace: {{ stargate_metrics_prometheus_namespace }}
+  interval: {{ stargate_metrics_prometheus_interval }}
 {% endif %}
 
-{% if nebula_sshd_enabled %}
+{% if dhd_sshd_enabled %}
 sshd:
-  enabled: {{ nebula_sshd_enabled }}
-  listen: {{ nebula_sshd_listen }}
-  host_key: /opt/nebula/ssh_host_ed25519_key
-{% if nebula_sshd_authorized_users %}
+  enabled: {{ dhd_sshd_enabled }}
+  listen: {{ dhd_sshd_listen }}
+  host_key: /etc/stargate/ssh_host_ed25519_key
+{% if dhd_sshd_authorized_users %}
   authorized_users:
-{% for sshd_user in nebula_sshd_authorized_users %}
+{% for sshd_user in dhd_sshd_authorized_users %}
     - user: {{ sshd_user.user }}
       keys:
 {% for ssh_key in sshd_user.get('keys', []) %}
@@ -106,8 +106,8 @@ sshd:
 # one node from another.
 #
 firewall:
-  outbound_action: {{ nebula_firewall_block_action }}
-  inbound_action: {{ nebula_firewall_block_action }}
+  outbound_action: {{ stargate_iris_block_action }}
+  inbound_action: {{ stargate_iris_block_action }}
   conntrack:
     tcp_timeout: 120h
     udp_timeout: 3m
@@ -119,14 +119,14 @@ firewall:
 #
 
   outbound:
-{% for rule in nebula_outbound_rules %}
+{% for rule in stargate_outbound_rules %}
     - port: {{ rule.port }}
       proto: {{ rule.proto }}
       host: {{ rule.host }}
 {% endfor %}
 
   inbound:
-{% for rule in nebula_inbound_rules %}
+{% for rule in stargate_inbound_rules %}
     - port: {{ rule.port }}
       proto: {{ rule.proto }}
       host: {{ rule.host }}

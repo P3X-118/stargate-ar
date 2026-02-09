@@ -1,13 +1,13 @@
 ---
 - name: Preflight checks
   ansible.builtin.block:
-    - name: Collecting all nebula_internal_ip_addr values
+    - name: Collecting all stargate_internal_ip_addr values
       ansible.builtin.set_fact:
         sorted_ips: >-
           {{ hostvars
              | dict2items
-             | selectattr('value.nebula_internal_ip_addr', 'defined')
-             | map(attribute='value.nebula_internal_ip_addr')
+             | selectattr('value.stargate_internal_ip_addr', 'defined')
+             | map(attribute='value.stargate_internal_ip_addr')
              | list
              | sort
           }}

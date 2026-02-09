@@ -1,5 +1,5 @@
 ---
-- name: Remove DHS
+- name: Remove DHD
   ansible.builtin.block:
     - name: Stop DHD service
       ansible.builtin.systemd:
@@ -13,7 +13,7 @@
       ansible.builtin.file:
         path: /etc/systemd/system/stargate.service
         state: absent
-  when: inventory_hostname in groups['nebula_lighthouse']
+  when: inventory_hostname in groups['stargate_dhd']
 
 - name: Remove Stargate nodes
   ansible.builtin.block:
@@ -27,18 +27,18 @@
 
     - name: Remove nebula systemd service
       ansible.builtin.file:
-        path: /etc/systemd/system/nebula.service
+        path: /etc/systemd/system/stargate.service
         state: absent
-  when: inventory_hostname not in groups['nebula_lighthouse']
+  when: inventory_hostname not in groups['stargate_dhd']
 
 - name: Remove Nebula installation directory
   ansible.builtin.file:
     path: /etc/stargate
     state: absent
 
-- name: Remove Nebula check from cron
+- name: Remove Gate check from cron
   ansbile.builtin.cron:
-    name: "stargate-check"
+    name: "gate-check"
     state: absent
 
 - name: Clear .dhd entries from /etc/hosts
