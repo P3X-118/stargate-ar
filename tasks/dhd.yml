@@ -1,19 +1,98 @@
 ---
-- name: Ensure CA cert/key exists
-  ansible.builtin.command:
-    chdir: /etc/stargate
-    cmd: ./nebula-cert ca -name "{{ stargate_network_name }}" -duration "{{ stargate_ca_cert_duration }}"
-    creates: /etc/stargate/ca.crt
+- name: Validate vault variables
+  block:
+    - name: Check for both dhd_cert and dhd_key
+      fail:
+        msg: "Both dhd_cert and dhd_key must be provided when using vault-based certificates"
+      when: (dhd_cert is defined and dhd_key is not defined) or (dhd_cert is not defined and dhd_key is defined)
+
+- name: Deploy certificates from vault
+  become: yes
+  block:
+    - name: Check if CA files exist
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: ca_files
+      loop:
+        - /etc/stargate/ca.crt
+        - /etc/stargate/ca.key
+      
+    - name: Compare existing certificates with vault content
+      block:
+        - name: Read existing CA cert
+          slurp:
+            src: /etc/stargate/ca.crt
+          register: existing_cert
+          when: ca_files.results[0].stat.exists
+          
+        - name: Read existing CA key
+          slurp:
+            src: /etc/stargate/ca.key
+          register: existing_key
+          when: ca_files.results[1].stat.exists
+          
+        - name: Compare certificate content
+          fail:
+            msg: "Existing ca.crt differs from vault dhd_cert content"
+          when: 
+            - ca_files.results[0].stat.exists
+            - existing_cert.content | b64decode != dhd_cert
+          
+        - name: Compare key content  
+          fail:
+            msg: "Existing ca.key differs from vault dhd_key content"
+          when: 
+            - ca_files.results[1].stat.exists
+            - existing_key.content | b64decode != dhd_key
+      when: ca_files.results | selectattr('stat.exists') | list | length > 0
+    
+    - name: Deploy CA certificate from vault
+      ansible.builtin.copy:
+        content: "{{ dhd_cert }}"
+        dest: /etc/stargate/ca.crt
+        owner: root
+        group: root
+        mode: '0644'
+        backup: yes
+      when: not ca_files.results[0].stat.exists or (ca_files.results[0].stat.exists and existing_cert.content | b64decode != dhd_cert)
+      
+    - name: Deploy CA key from vault
+      ansible.builtin.copy:
+        content: "{{ dhd_key }}"
+        dest: /etc/stargate/ca.key
+        owner: root
+        group: root
+        mode: '0600'
+        backup: yes
+      when: not ca_files.results[1].stat.exists or (ca_files.results[1].stat.exists and existing_key.content | b64decode != dhd_key)
+  when: 
+    - dhd_cert is defined and dhd_key is defined
+    - stargate_install_ca_certs|bool
+
+- name: Auto-generate CA certificates (fallback)
+  become: yes
+  block:
+    - name: Ensure CA cert/key exists
+      ansible.builtin.command:
+        chdir: /etc/stargate
+        cmd: ./nebula-cert ca -name "{{ stargate_network_name }}" -duration "{{ stargate_ca_cert_duration }}"
+        creates: /etc/stargate/ca.crt
+  when: 
+    - (dhd_cert is not defined or dhd_key is not defined)
+    - stargate_auto_generate_certs|bool
 
 - name: Ensure stargate cert/key exists
+  become: yes
   ansible.builtin.command:
     chdir: /etc/stargate
     cmd: ./nebula-cert sign -name "{{ stargate_dhd_hostname }}" -ip "{{ stargate_internal_ip_addr }}/{{ stargate_network_cidr }}" -duration "{{ stargate_client_cert_duration }}"
     creates: "/etc/stargate/{{ stargate_dhd_hostname }}.crt"
+  when: stargate_install_client_certs|bool
 
 - name: Ensure stargate is configured
+  become: yes
   ansible.builtin.template:
-    src: dhd_config.yml.j2 
+    src: dhd.config.yml.j2 
     dest: /etc/stargate/config.yml
     owner: root
     group: root
@@ -21,17 +100,20 @@
   notify: restart stargate
 
 - name: Ensure stargate service exists
+  become: yes
   ansible.builtin.template:
-    src: stargate.service.j2
+    src: dhd.sysd.j2
     dest: /etc/systemd/system/stargate.service
     owner: root
     group: root
     mode: '0644'
 
 - name: Ensure stargate service is enabled and running
+  become: yes
   ansible.builtin.systemd: 
     name: stargate
     daemon_reload: yes
     enabled: yes
     masked: no
     state: started
+  when: stargate_install_ca_certs|bool or stargate_install_client_certs|bool

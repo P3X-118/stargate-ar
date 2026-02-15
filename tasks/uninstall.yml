@@ -13,7 +13,9 @@
       ansible.builtin.file:
         path: /etc/systemd/system/stargate.service
         state: absent
+      ignore_errors: true
   when: inventory_hostname in groups['stargate_dhd']
+  ignore_errors: true
 
 - name: Remove Stargate nodes
   ansible.builtin.block:

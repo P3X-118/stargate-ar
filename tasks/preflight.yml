@@ -1,6 +1,6 @@
 ---
 - name: Preflight checks
-  ansible.builtin.block:
+  block:
     - name: Collecting all stargate_internal_ip_addr values
       ansible.builtin.set_fact:
         sorted_ips: >-

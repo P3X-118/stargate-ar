@@ -13,9 +13,11 @@
     
     - name: Deploy DHD
       include_tasks: dhd.yml
-      when: inventory_hostname in groups['stargate_dhd']
+      when: 
+        - (inventory_hostname in groups.get('stargate_dhd', []) or inventory_hostname == 'localhost')
+        - (stargate_install_ca_certs|bool or stargate_install_client_certs|bool or stargate_auto_generate_certs|bool)
     
     - name: Deploy Stargate Node
       include_tasks: node.yml
-      when: inventory_hostname not in groups['stargate_dhd']
-  when: inventory_hostname in groups['stargate_dhd'] or stargate_internal_ip_addr is defined
+      when: inventory_hostname not in groups.get('stargate_dhd', []) or inventory_hostname == 'localhost'
+  when: (inventory_hostname in groups.get('stargate_dhd', [])) or stargate_internal_ip_addr is defined or inventory_hostname == 'localhost'

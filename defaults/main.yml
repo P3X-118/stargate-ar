@@ -1,17 +1,25 @@
 stargate_version: 1.10.2
+
+# DHD Certificate/Key from Ansible Vault
+# These should be defined in vault-encrypted files
+dhd_cert: null  # Encrypted PEM certificate content
+dhd_key: null   # Encrypted PEM private key content
 stargate_network_name: "Default"
 stargate_network_cidr: 24
+dhd_network_cidr: 24
 stargate_ca_cert_duration: "87600h0m0s" #10 years
 stargate_client_cert_duration: "43800h0m0s" #5 years
+dhd_client_cert_duration: "43800h0m0s" #5 years
 stargate_clean_install: false
 stargate_dhd_build_hosts_file: true
 stargate_node_dhd_in_hosts_file: true
 stargate_node_use_dhd_as_relay: false
-stargate_install_check_cron: false
+dhd_install_check_cron: false
 
 
 stargate_dhd_hostname: dhd
-stargate_dhd_internal_ip_addr: 169.254.1.1
+stargate_internal_ip_addr: 169.254.1.1
+dhd_internal_ip_addr: 169.254.1.1
 stargate_dhd_public_hostname: dhd.sgc.ai
 stargate_dhd_public_port: 4242
 stargate_dhd_is_relay: false
@@ -47,4 +55,10 @@ dhd_sshd_enabled: false
 dhd_sshd_listen: "127.0.0.1:80942"
 dhd_sshd_authorized_users: []
 dhd_sshd_trusted_cas: []
+
+# Control certificate installation behavior
+# Set to true to enable certificate installation (default: false for security)
+stargate_install_ca_certs: false
+stargate_install_client_certs: false
+stargate_auto_generate_certs: false
 

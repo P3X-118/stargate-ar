@@ -1,4 +1,5 @@
 - name: Ensure /etc/stargate directory exists
+  become: yes
   ansible.builtin.file:
     path: /etc/stargate
     state: directory
@@ -7,6 +8,7 @@
     group: root
 
 - name: Check for existing Nebula install
+  become: yes
   ansible.builtin.stat:
     path: '/etc/stargate/nebula'
   register: installed_nebula_stats
@@ -59,7 +61,7 @@
   when: dhd_sshd_enabled
 
 - name: Read SSH key files and build registry
-  ansible.builtin.block:
+  block:
     - name: Read all SSH key files
       slurp:
         src: "{{ item.1 }}"
