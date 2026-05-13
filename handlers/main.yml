@@ -2,12 +2,4 @@
   systemd:
     name: stargate
     state: restarted
-  when: inventory_hostname not in groups['dhd']
-  listen: "restart nebula"
-
-- name: Restart DHD
-  systemd:
-    name: dhd
-    state: restarted
-  when: inventory_hostname in groups['dhd']
   listen: "restart stargate"

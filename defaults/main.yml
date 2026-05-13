@@ -1,4 +1,4 @@
-stargate_version: 1.10.2
+stargate_version: "1.10.3-0"
 
 # DHD Certificate/Key from Ansible Vault
 # These should be defined in vault-encrypted files
@@ -52,7 +52,7 @@ stargate_outbound_rules:
   - { port: "any", proto: "any", host: "any" }
 
 dhd_sshd_enabled: false
-dhd_sshd_listen: "127.0.0.1:80942"
+dhd_sshd_listen: "127.0.0.1:8094"
 dhd_sshd_authorized_users: []
 dhd_sshd_trusted_cas: []
 

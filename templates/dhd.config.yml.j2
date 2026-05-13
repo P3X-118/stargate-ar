@@ -1,9 +1,9 @@
 pki:
   # every node needs a copy of ca.crt, <client-name>.key,
   # and <client-name>.crt
-  ca: /opt/nebula/ca.crt
-  cert: /opt/nebula/{{ stargate_dhd_hostname }}.crt
-  key: /opt/nebula/{{ stargate_dhd_hostname }}.key
+  ca: /etc/stargate/ca.crt
+  cert: /etc/stargate/{{ stargate_dhd_hostname }}.crt
+  key: /etc/stargate/{{ stargate_dhd_hostname }}.key
 
 static_host_map:
  # how to find one or more lighthouse nodes

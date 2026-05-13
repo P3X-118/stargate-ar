@@ -27,7 +27,7 @@
 
 - name: Download & Extract Nebula
   ansible.builtin.unarchive:
-    src: "https://github.com/slackhq/nebula/releases/download/v{{ stargate_version }}/nebula-linux-{{ nebula_architectures[ansible_facts.architecture] }}.tar.gz"
+    src: "https://github.com/P3X-118/nebula/releases/download/v{{ stargate_version }}/nebula-linux-{{ nebula_architectures[ansible_facts.architecture] }}.tar.gz"
     dest: "/etc/stargate"
     remote_src: yes
   when: (installed_stargate_version|default(stargate_version) != stargate_version) or (not installed_nebula_stats.stat.exists)
